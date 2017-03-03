@@ -1,7 +1,10 @@
 # Fluent Python 读书笔记
+[TOC]
+
 # Chapter 1: The Python Data Model
 ## French Card example: 
 * we can use `__len__` and `__getitem__` method in our defined classes to implement the `len()` and `[]`(slicing) method. 
+
 ```python
 import collections
 
@@ -81,6 +84,7 @@ class Vector:
 
 ## Tuples
 * We can use `*` to grab excess items: **Works in any position!**
+
 ```python
 >>> a,b, *rest = range(5) # 2, 3
 >>> rest
@@ -95,6 +99,7 @@ class Vector:
 
 ## Using `+` and `*`
 Nested list are by reference,
+
 ```python
 >>> board1 = [[‘_’] * 3 for i in range(3)]
 >>> board2 = [[‘_’] * 3] * 3 # WRONG! 
@@ -155,6 +160,7 @@ def factorial(n):
 ## Callable objects:
 * call operator `()` can be checked by `callable()` function
 * We can implement a `__call__` instance method to make a objects callable:
+
 ``` python
 
 >>> bingo = BingoCage(range(3))
@@ -184,6 +190,7 @@ class BingoCage:
 
 ##  Function introspection
 * we can check what methods does a plain function has over a plain class:
+
 ```python
 >>> class C: pass
 >>> obj = C()
@@ -194,6 +201,8 @@ class BingoCage:
 
 ## Packages for functional Programming
 * `itemgetter` and `attrgetter` great functions to extract positional and key-pair values
+
+
 ```python
 >>> from operator import itemgetter, attrgetter
 >>> getter = itemgetter(1, 0)
@@ -211,6 +220,7 @@ class BingoCage:
 (‘Tokyo’, 1)
 ```
 * `methodcaller` has similar usage:
+
 ```python
 >>> from operator import methodcaller
 >>> s = “FRANK the tank”
@@ -222,6 +232,8 @@ class BingoCage:
 ‘frank the tank’
 ```
 * `functools.partial` can be a very good `lambda` replacement
+
+
 ```python
 >>> def boo(a, b, c):
 …     return (a,b,c)
@@ -239,6 +251,8 @@ class BingoCage:
 
 ## Variable Scope Rule
 * Python does not require you to declare variables, but assumes that a variable assigned in the body of a function is local
+
+
 ```python
 >>> b = 6
 >>> def f2(a):
@@ -268,6 +282,7 @@ UnboundLocalError: local variable ‘b’ referenced before assignment
 
 ## Closure
 * `nonlocal` vs `global` (`nonlocal` is a Python3 feature)
+
 ```python
 a = 1
 def A():
@@ -289,6 +304,7 @@ def A():
 1
 ```
 * we can use `functools.lru_cache` to save time in recursion by:
+
 ```python
 import functools
 from clockdeco import clock
@@ -305,6 +321,7 @@ if __name__ == ‘__main’:
 ```
 
 * if want to include parameter in decorator (`lru_cache()` above), we need to make that decorator to return another decorator: therefore:
+
 ```python
 def f():
 	…
@@ -321,18 +338,22 @@ f = functools.lru_cache()(f)
 * `a == b` is syntactic sugar for `a__eq__(b)`, if `a` and `b` are objects, the `__eq__` method will fetch the id. so will get the same result as `is`. However, most built-in types override `__eq__` with more meaningful implementations. (e.g., comparing large collections or deeply nested structures.)
 
 ## Copies are shallow by default
+
 ```python
 l1 = [1, [2, 3]]
 l2 = list(l1) # or l1[:], both shallow copy
 l1[1].append(4)
 l2 # will give [1, [2, 3, 4]]
 ```
+
 * we can also use `copy.copy` as shallow copy and `copy.deepcopy` as deep copy. 
 * Some cases, such as singleton, we want to avoid making such copy. Therefore, we need to implement the `__copy__()` and `__deepcopy__()` method.
 
 ## Function parameters as references
 * The only mode of parameter passing in Python is **call by sharing**. It means that each formal parameter of the function gets a copy of each reference in the arguments. In other words, the parameters inside the function become aliases of the actual argument.
 * This means that: **a function may change any mutable object passed as a parameter, but it cannot change the identity of those objects**.
+
+
 ```python
 >>> def f(a, b):
 …     a += b
@@ -375,7 +396,8 @@ l2 # will give [1, [2, 3, 4]]
 4301587808
 4301454864
 ```
-* **Mutable types as parameter defaults is a BAD IDEA!**. if a default value is a mutable object, and you change it, the change will affect every future call of the function.
+
+**Mutable types as parameter defaults is a BAD IDEA!**. if a default value is a mutable object, and you change it, the change will affect every future call of the function.
 
 ## `del` and garbage collection
 * The `del` statement deletes names, not objects. An object my be garbage collected as result of a `del` command, but only if the variable deleted holds the last reference to the object, or if the object becomes unreachable.
@@ -402,6 +424,7 @@ False
 ## Hashable
 * we can use `@property` decorator to call without using `()`
 * hide `self.x` to `self.__x` and load it using the following:
+
 ```python
 class boo():
 	def __init__(self, x):
@@ -426,6 +449,7 @@ AttributeError: can’t set attribute
  # Chapter 10: Sequence Hacking, Hashing, and Slicing
 ## How slice work:
 * `__getitem__` will return a slice object or a single number
+
 ```python
 def __getitem__(self, index):
 	cls = type(self)
@@ -514,11 +538,14 @@ PONG: <__main__.D object at 0x10197f6d8>
 
 
 # Chapter 13: Operator Overloading: Doing It Right
+
 ## Operator Overloading 101
+
 * we cannot overload operators for the built-in types
 * We cannot create new operators, only overload existing ones
 * A few operators cannot be overloaded: `is`, `and,` `or`, `not`(but the bitwise `&`, `|`, `~`, can )
 * Interesting case: when `x` and `+x` are not equal (in built-in)
+
 ```python
 >>> ct = Counter(“abracadabra”)
 >>> ct
@@ -528,6 +555,7 @@ Counter({‘a’: 5, ‘r’: 2, ‘b’: 2, ‘c’: 1, ‘d’: 1})
 >>> +ct
 Counter({‘a’: 5, ‘b’: 2, ‘c’: 1})
 ```
+
 
 ## Augmented Assignment Operators
 * if we do not implement `__iadd__` method, we might get a new object if the previous one is immutable, because (`a+=b` -> `a = a+b`)
@@ -556,6 +584,7 @@ def gen_123(): # this will return a generator
 
 * a generator function builds a generator object that wraps the body of the function. 
 * we can also use `genexp` to make generator:
+
 ```python
 >>> a = (i for i in range(100))
 >>> a
@@ -564,6 +593,7 @@ def gen_123(): # this will return a generator
 
 ## `yield from`
 We can use `yield from` to replace nested for-loop
+
 ```python
 def chain(*iterables):
 	for it in iterables:
@@ -581,6 +611,7 @@ def chain(*iterables):
 
 ## closer look at `iter` function
 * we can add a second params to `iter` function for termination:
+
 ```python
 def d6():
 	return randint(1,6)
@@ -651,8 +682,10 @@ Traceback (most recent call last):
   File “<stdin>”, line 1, in <module>
 StopIteration
 ```
+
 * we can use the `inspect.getgeneratorstate(…)` to check the state.
 * `my_coro.send(42)` works only when the state is currently suspended:
+
 ```python
 >>> my_coro = simple_coroutine()
 >>> my_coro.send(42)
@@ -660,6 +693,7 @@ Traceback (most recent call last):
   File “<stdin>”, line 1, in <module>
 TypeError: can’t send non-None value to a just-started generator
 ```
+
 * The `a  = yield b` syntax will assign `a` to `.send(…)` and prints `b`. Moreover, `yield` will be evaluated first before the assignment `=`. In this case, `b` will be assigned only when coroutine is activated later by the client code
 
 ## Using `yield from`
@@ -726,6 +760,7 @@ class LineItem:
 
 ## Coding a property factory
 * **Properties are class attribute!**
+
 ```python
 def quantity(storage_name): 
     def qty_getter(instance):  
@@ -777,6 +812,7 @@ class Quantity:  # <1>
 # Chapter 21: Class Metaprogramming
 ## A class factory
 * we can use `type` to build a class:
+
 ```python
 MyClass = type('MyClass', (MySuperClass, MyMixin),
 			{"x": 42, "x2" : lambda self: self.x*2})
@@ -790,6 +826,7 @@ class MyClass(MySuperClass, MyMixin):
 ```
 
 * therefore, we can create class on the fly:
+
 ```python
 def record_factory(cls_name, field_names):
     try:
@@ -828,6 +865,7 @@ def record_factory(cls_name, field_names):
 ## Metaclasses
 * A meta class is a class factory, written in class
 * Consider the Python object model: **classes are objects**. Therefore each class must be an instance of some other class. By default, Python classes are instances of `type`. In other word, `type` is the metaclass of most built-in and user-defined classes:
+
 ```python
 >>> “spam”.__class__
 <type ‘str’>
@@ -836,6 +874,7 @@ def record_factory(cls_name, field_names):
 >>> type.__class__
 <type ‘type’> # type is an instance of itself
 ```
+
 * **they are NOT inherit from type, but are instances of type**. They are all subclasses of `object`
 * `object` is an instance of `type`, and `type` is a subclass of `object`.
 * a metaclass inherits from `type` the power to construct classes.
