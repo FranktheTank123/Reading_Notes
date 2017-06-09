@@ -120,3 +120,25 @@ $$
 
 Why doing this? Because Q form is much more useful to take expectation
 
+## Reinforcement Learning Basics
+In MDP problem, we  have agent (policy) with environment (the MDP). Now, in RL, agent and environment are separate. Therefore, agent needs to explore the environment using action, and the feedback are rewards & new states. Under this set-up, we **don't know the rules**.
+
+### Behavior structures
+* **Plan**: a fixed sequence of actions.
+    * **Con 1**: cannot do this during learning
+    * **Con 2**: what if environment is stochastic
+* **Conditional Plan**: plan with if statement
+* **Stationary Policy / Universal Plan**: mapping from state to action
+    * **Con 1**: very large
+**For MDP, we always have optimal stationary policy.**
+
+### Evaluating a learner
+In RL, we don't evaluate policy, we evaluate learner, who outputs policy.
+
+Possible evaluation metrics:
+
+* value of returned policy
+* computational complexity (time)
+* sample complexity (how much data it needs)
+* space complexity (usually not an issue vs. the other 2 above)
+
